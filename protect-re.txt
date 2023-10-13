@@ -1,0 +1,55 @@
+#####################################################################
+
+# Used to protect the RE from malicious activity
+# Logging on both accept and discard used to keep a record of
+#   all connections and attempted connections.
+# Depending on the network, tighter prefix-lists may be required.
+# Depending on the network, different allow terms may be required.
+# This configuration is based of the CIS L2 2.1.0 Benchmark
+#####################################################################
+
+# Configure the trusted source addresses
+set policy-options prefix-list ssh_source_addresses <terminal servers>
+set policy-options prefix-list private_addresses
+set policy-options prefix-list bgp_source_addresses
+set policy-options prefix-list solarwinds_addresses
+ 
+# Configure the firewall filter rules
+# Allow SSH (all devices)
+set firewall family inet filter protect-RE term ssh-term from source-prefix-list ssh_source_addresses
+set firewall family inet filter protect-RE term ssh-term from protocol tcp
+set firewall family inet filter protect-RE term ssh-term from destination-port ssh
+set firewall family inet filter protect-RE term ssh-term from then accept
+set firewall family inet filter protect-RE term ssh-term from then syslog
+set firewall family inet filter protect-RE term ssh-term from then log
+# Allow NTP (Firewalls only)
+set firewall family inet filter protect-RE term ntp-term from source-prefix-list private_addresses
+set firewall family inet filter protect-RE term ntp-term from protocol udp
+set firewall family inet filter protect-RE term ntp-term from destination-port ntp
+set firewall family inet filter protect-RE term ntp-term from then accept
+set firewall family inet filter protect-RE term ntp-term from then syslog
+set firewall family inet filter protect-RE term ntp-term from then log
+# Allow BGP (All routers, management switches, LAN switches)
+set firewall family inet filter protect-RE term bgp-term from source-prefix-list bgp_source_addresses
+set firewall family inet filter protect-RE term bgp-term from protocol tcp
+set firewall family inet filter protect-RE term bgp-term from destination-port bgp
+set firewall family inet filter protect-RE term bgp-term from then accept
+set firewall family inet filter protect-RE term bgp-term from then syslog
+set firewall family inet filter protect-RE term bgp-term from then log
+# Allow SNMPv3 (all devices)
+set firewall family inet filter protect-RE term snmp-term from source-prefix-list solarwinds_addresses
+set firewall family inet filter protect-RE term snmp-term from protocol udp
+set firewall family inet filter protect-RE term snmp-term from destination-port snmp
+set firewall family inet filter protect-RE term snmp-term from then accept
+set firewall family inet filter protect-RE term snmp-term from then syslog
+set firewall family inet filter protect-RE term snmp-term from then log
+ 
+# Temporary Accept and Log
+set firewall family inet filter protect-RE term monitor-term from then syslog
+set firewall family inet filter protect-RE term monitor-term from then log
+set firewall family inet filter protect-RE term monitor-term from then accept
+ 
+# Explicit Deny and Log
+set firewall family inet filter protect-RE term deny-and-log-term from then log
+set firewall family inet filter protect-RE term deny-and-log-term from then syslog
+set firewall family inet filter protect-RE term deny-and-log-term from then discard
