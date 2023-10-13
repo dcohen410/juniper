@@ -15,28 +15,28 @@ set policy-options prefix-list bgp_source_addresses
 set policy-options prefix-list solarwinds_addresses
  
 # Configure the firewall filter rules
-# Allow SSH (all devices)
+# Allow SSH 
 set firewall family inet filter protect-RE term ssh-term from source-prefix-list ssh_source_addresses
 set firewall family inet filter protect-RE term ssh-term from protocol tcp
 set firewall family inet filter protect-RE term ssh-term from destination-port ssh
 set firewall family inet filter protect-RE term ssh-term from then accept
 set firewall family inet filter protect-RE term ssh-term from then syslog
 set firewall family inet filter protect-RE term ssh-term from then log
-# Allow NTP (Firewalls only)
+# Allow NTP
 set firewall family inet filter protect-RE term ntp-term from source-prefix-list private_addresses
 set firewall family inet filter protect-RE term ntp-term from protocol udp
 set firewall family inet filter protect-RE term ntp-term from destination-port ntp
 set firewall family inet filter protect-RE term ntp-term from then accept
 set firewall family inet filter protect-RE term ntp-term from then syslog
 set firewall family inet filter protect-RE term ntp-term from then log
-# Allow BGP (All routers, management switches, LAN switches)
+# Allow BGP 
 set firewall family inet filter protect-RE term bgp-term from source-prefix-list bgp_source_addresses
 set firewall family inet filter protect-RE term bgp-term from protocol tcp
 set firewall family inet filter protect-RE term bgp-term from destination-port bgp
 set firewall family inet filter protect-RE term bgp-term from then accept
 set firewall family inet filter protect-RE term bgp-term from then syslog
 set firewall family inet filter protect-RE term bgp-term from then log
-# Allow SNMPv3 (all devices)
+# Allow SNMPv3 
 set firewall family inet filter protect-RE term snmp-term from source-prefix-list solarwinds_addresses
 set firewall family inet filter protect-RE term snmp-term from protocol udp
 set firewall family inet filter protect-RE term snmp-term from destination-port snmp
